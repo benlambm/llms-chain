@@ -1,0 +1,220 @@
+<h2 style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 2.25em; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 4px solid #000000; padding-bottom: 0.5em; margin-top: 0; margin-bottom: 1em; color: #000000;">Chapter One: The Architecture of Connectivity: Understanding the OSI Reference Model</h2>
+
+<h3 style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.5em; font-weight: 700; letter-spacing: 0.03em; border-left: 6px solid #000000; padding-left: 0.75em; margin-top: 2em; margin-bottom: 1em; color: #000000;">Learning Objectives</h3>
+<ul style="list-style-type: square; margin-left: 1.5em; margin-bottom: 1.5em; line-height: 1.8; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; color: #000000; max-width: 75ch;">
+  <li style="margin-bottom: 0.75em; padding-left: 0.5em;">Explain the historical necessity and theoretical purpose of the Open Systems Interconnection (OSI) reference model in the context of vendor-neutral networking.</li>
+  <li style="margin-bottom: 0.75em; padding-left: 0.5em;">Identify the seven layers of the OSI model and describe the specific functions and Protocol Data Units (PDUs) associated with each.</li>
+  <li style="margin-bottom: 0.75em; padding-left: 0.5em;">Evaluate the process of encapsulation and decapsulation as data moves through the theoretical stack during a network transmission.</li>
+</ul>
+
+<details style="background-color: #F5F5F5; border: 3px solid #000000; padding: 1.5em; margin: 2em 0; max-width: 75ch;">
+  <summary style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.1em; font-weight: 700; cursor: pointer; letter-spacing: 0.02em; color: #000000;">
+    ✦ KNOWLEDGE CHECK: What are the primary goals of studying the OSI model in this chapter?</summary>
+  <p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; margin-top: 1em; border-top: 2px solid #E0E0E0; padding-top: 1em; margin-bottom: 0; color: #000000;">
+    <strong style="font-weight: 800;">Answer:</strong> The goals are to understand the historical need for vendor-neutral standards, identify the functions and PDUs of all seven layers, and master the concepts of encapsulation and decapsulation.</p>
+</details>
+
+<hr style="border: none; border-top: 3px solid #000000; margin: 3em auto; width: 70%;">
+
+<h3 style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.5em; font-weight: 700; letter-spacing: 0.03em; border-left: 6px solid #000000; padding-left: 0.75em; margin-top: 2em; margin-bottom: 1em; color: #000000;">The Genesis of a Universal Language</h3>
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">In the early decades of computing, the digital landscape resembled a collection of isolated islands rather than a global continent. During the 1970s, as organizations began to see the value in connecting computers, they faced a significant hurdle: proprietary lock-in. If a company purchased hardware from IBM, that hardware could only communicate with other IBM machines using IBM’s specific rules. If they bought equipment from Digital Equipment Corporation (DEC), those machines were similarly restricted to their own ecosystem. These manufacturers used disparate methods for electrical signaling, data packaging, and error checking, making cross-vendor communication nearly impossible. This fragmented environment stifled innovation and forced consumers into expensive, single-vendor contracts.</p>
+
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">Recognizing that the future of technology depended on interoperability, the International Organization for Standardization (ISO) began developing a framework in the late 1970s to standardize how computers talk to one another. The result, published in 1984, was the <strong style="font-weight: 800;">Open Systems Interconnection (OSI) reference model</strong>. It is important to understand from the outset that the OSI model is <em style="font-style: italic; letter-spacing: 0.01em;">not</em> a physical set of rules or a specific software program you can download. Instead, it is a conceptual framework—a mental map—that allows engineers, students, and technicians to visualize how data travels across a network. It provides a common language so that a developer in Tokyo and a hardware engineer in New York can discuss "Layer 3 issues" and immediately understand they are talking about logical addressing and routing.</p>
+
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">The OSI model breaks the complex task of network communication into seven distinct layers. This modular approach follows a
+</p>
+<figure style="margin: 2em 0; max-width: 75ch;">
+  <img style="width: 100%; height: auto; border: 1px solid #E0E0E0; border-radius: 4px;"
+       src="https://ik.imagekit.io/blamb/lms-content/fig1-20260102-152608_WvRNBmGgF.png"
+       alt="A vertical stack diagram showing the seven layers of the OSI model from Application at the top to Physical at the bottom."
+       loading="lazy" />
+  <figcaption style="padding: 0.75em 1em; font-style: italic; background-color: #F5F5F5; text-align: center; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 16px; color: #333333; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;">
+    Figure 1: The seven layers of the OSI reference model, categorized into upper and lower layers. <em>(Generated by AI)</em>
+  </figcaption>
+</figure>
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">
+ "divide and conquer" philosophy. By isolating specific functions into layers, the industry can innovate at one level without needing to redesign the entire system. For example, when the world transitioned from wired Ethernet to wireless Wi-Fi, the way we browse the web didn't have to change. The "lower" layers that handle the physical signals evolved, while the "upper" layers that handle web content remained the same because they were shielded by the modular boundaries of the OSI model.</p>
+
+<details style="background-color: #F5F5F5; border: 3px solid #000000; padding: 1.5em; margin: 2em 0; max-width: 75ch;">
+  <summary style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.1em; font-weight: 700; cursor: pointer; letter-spacing: 0.02em; color: #000000;">
+    ✦ KNOWLEDGE CHECK: Why is the OSI model described as a "conceptual framework" rather than a physical program?</summary>
+  <p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; margin-top: 1em; border-top: 2px solid #E0E0E0; padding-top: 1em; margin-bottom: 0; color: #000000;">
+    <strong style="font-weight: 800;">Answer:</strong> The OSI model is a mental map or theoretical guide that standardizes how we visualize and discuss network functions; it is not software or hardware itself, but a way to ensure different vendors' technologies can interoperate.</p>
+</details>
+
+<hr style="border: none; border-top: 3px solid #000000; margin: 3em auto; width: 70%;">
+
+<h3 style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.5em; font-weight: 700; letter-spacing: 0.03em; border-left: 6px solid #000000; padding-left: 0.75em; margin-top: 2em; margin-bottom: 1em; color: #000000;">The Upper Layers: The User’s Interface to the Network</h3>
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">The journey of data typically begins at the top of the stack with the <strong style="font-weight: 800;">Application Layer</strong>, or <strong style="font-weight: 800;">Layer 7</strong>. It is a common misconception among new students that the Application Layer refers to the software programs themselves, such as a web browser or a word processor. In reality, Layer 7 represents the specific protocols and services that allow those software programs to interact with the network. If you are using a browser to view a webpage, the browser itself is an application, but the Hypertext Transfer Protocol (HTTP) it uses to request data is the Layer 7 protocol. This layer is responsible for identifying communication partners, determining resource availability, and synchronizing communication. It is the point where the human-centric world of clicking buttons meets the machine-centric world of data transmission.</p>
+
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">Directly beneath the Application Layer sits the <strong style="font-weight: 800;">Presentation Layer</strong>, or <strong style="font-weight: 800;">Layer 6</strong>. This layer acts as the network's translator. Because different computer systems may use different methods for representing data—such as different character encoding schemes—the Presentation Layer ensures that the information sent by the Application Layer of one system is readable by the Application Layer of another. Beyond translation, this layer is also the primary home for data compression and encryption. When you see a "lock" icon in your browser indicating a secure connection, Layer 6 processes are likely at work, scrambling the data into a secure format before it is handed down the stack. By handling these "cosmetic" and security aspects here, the layers above and below can focus on their primary jobs without worrying about the specific format of the data.</p>
+
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">The final component of the "upper layers" is the <strong style="font-weight: 800;">Session Layer</strong>, or <strong style="font-weight: 800;">Layer 5</strong>. Think of this layer as the administrative assistant or the moderator of a conversation. When two computers need to exchange data, they often need to maintain a persistent "session" to ensure the dialogue remains organized. The Session Layer manages the setup, coordination, and teardown of these connections. It handles "check-pointing," which allows a large file transfer to resume from the last known good point if a connection is temporarily lost, rather than starting over from the beginning. It also manages whether a conversation is half-duplex, where only one party speaks at a time, or full-duplex, where both can speak simultaneously. Together, these three upper layers focus on the needs of the application and the user, preparing the data for the more technical journey through the network infrastructure.</p>
+
+<details style="background-color: #F5F5F5; border: 3px solid #000000; padding: 1.5em; margin: 2em 0; max-width: 75ch;">
+  <summary style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.1em; font-weight: 700; cursor: pointer; letter-spacing: 0.02em; color: #000000;">
+    ✦ KNOWLEDGE CHECK: Which layer is responsible for data encryption and compression?</summary>
+  <p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; margin-top: 1em; border-top: 2px solid #E0E0E0; padding-top: 1em; margin-bottom: 0; color: #000000;">
+    <strong style="font-weight: 800;">Answer:</strong> The Presentation Layer (Layer 6) is responsible for data translation, encryption, and compression, ensuring that data is in a readable and secure format for the Application Layer.</p>
+</details>
+
+<hr style="border: none; border-top: 3px solid #000000; margin: 3em auto; width: 70%;">
+
+<h3 style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.5em; font-weight: 700; letter-spacing: 0.03em; border-left: 6px solid #000000; padding-left: 0.75em; margin-top: 2em; margin-bottom: 1em; color: #000000;">The Transport Layer: Ensuring End-to-End Reliability</h3>
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">As we move down to <strong style="font-weight: 800;">Layer 4</strong>, the <strong style="font-weight: 800;">Transport Layer</strong>, the focus shifts from the "what" of the data to the "how" of the delivery. This is the first layer concerned with the end-to-end movement of data from the source host to the destination host. The primary responsibility of the Transport Layer is to take the large stream of data coming from the upper layers and break it into smaller, manageable pieces called <strong style="font-weight: 800;">segments</strong>. This process is necessary because network links have physical limits on how much data they can carry at once.</p>
+
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">The Transport Layer is also where we encounter the concept of "reliability" versus "best-effort" delivery. In some cases, we need a guarantee that every single bit of data arrives in the correct order, such as when downloading a banking statement. In these instances, Layer 4 employs error-checking mechanisms and acknowledgment signals, where the receiver tells the sender, "I got segment one, please send segment two." If a segment goes missing, Layer 4 manages the retransmission. In other cases, such as a live video stream, speed is more important than perfect accuracy; if a single frame of video is lost, it is better to skip it and keep the video moving than to pause everything to ask for a resend. Layer 4 handles these different requirements through various protocols. Additionally, this layer uses "port numbers" to ensure that data reaching a computer is directed to the correct application—ensuring that your web traffic doesn't accidentally get handled by your music streaming app.</p>
+
+<details style="background-color: #F5F5F5; border: 3px solid #000000; padding: 1.5em; margin: 2em 0; max-width: 75ch;">
+  <summary style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.1em; font-weight: 700; cursor: pointer; letter-spacing: 0.02em; color: #000000;">
+    ✦ KNOWLEDGE CHECK: What is the Protocol Data Unit (PDU) at Layer 4, and what is the purpose of port numbers?</summary>
+  <p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; margin-top: 1em; border-top: 2px solid #E0E0E0; padding-top: 1em; margin-bottom: 0; color: #000000;">
+    <strong style="font-weight: 800;">Answer:</strong> The PDU at Layer 4 is the "segment." Port numbers are used to ensure that incoming data is directed to the correct specific application or service on the destination computer.</p>
+</details>
+
+<hr style="border: none; border-top: 3px solid #000000; margin: 3em auto; width: 70%;">
+
+<h3 style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.5em; font-weight: 700; letter-spacing: 0.03em; border-left: 6px solid #000000; padding-left: 0.75em; margin-top: 2em; margin-bottom: 1em; color: #000000;">The Network Layer: Finding the Path</h3>
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">Once the Transport Layer has organized the data into segments, it hands them down to <strong style="font-weight: 800;">Layer 3</strong>, the <strong style="font-weight: 800;">Network Layer</strong>. This is arguably the most famous layer in the world of networking because it is where "routing" happens. If the Transport Layer is about the conversation, the Network Layer is about the map. The primary job of Layer 3 is to determine the best physical path for the data to take across a series of interconnected networks to reach its final destination.</p>
+
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">To do this, the Network Layer adds a header to the segment, turning it into a <strong style="font-weight: 800;">packet</strong>. This header contains logical addresses—the most common being <strong style="font-weight: 800;">Internet Protocol (IP) addresses</strong>. Unlike a physical address burned into a hardware chip, a logical address is assigned based on the device's location in the global network, much like a mailing address includes a zip code to help the post office find the right city. Devices called routers operate primarily at this layer. They examine the destination IP address on every incoming packet and consult their internal "routing tables" to decide which neighbor to send the packet to next. The Network Layer does not care about the physical medium; it doesn't matter if the packet travels over a satellite link, a copper wire, or a fiber optic cable. Its only concern is the logical path from Point A to Point B.</p>
+
+<details style="background-color: #F5F5F5; border: 3px solid #000000; padding: 1.5em; margin: 2em 0; max-width: 75ch;">
+  <summary style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.1em; font-weight: 700; cursor: pointer; letter-spacing: 0.02em; color: #000000;">
+    ✦ KNOWLEDGE CHECK: What is the primary difference between a logical address and a physical address?</summary>
+  <p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; margin-top: 1em; border-top: 2px solid #E0E0E0; padding-top: 1em; margin-bottom: 0; color: #000000;">
+    <strong style="font-weight: 800;">Answer:</strong> A logical address (like an IP address) is assigned based on a device's location in the network to facilitate routing, whereas a physical address (like a MAC address) is permanently burned into the hardware by the manufacturer.</p>
+</details>
+
+<hr style="border: none; border-top: 3px solid #000000; margin: 3em auto; width: 70%;">
+
+<h3 style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.5em; font-weight: 700; letter-spacing: 0.03em; border-left: 6px solid #000000; padding-left: 0.75em; margin-top: 2em; margin-bottom: 1em; color: #000000;">The Lower Layers: The Physical Reality of Bits</h3>
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">Below the Network Layer, we enter the realm of local delivery at <strong style="font-weight: 800;">Layer 2</strong>, the <strong style="font-weight: 800;">Data Link Layer</strong>. While the Network Layer focuses on the global journey, the Data Link Layer is concerned with the "hop-by-hop" movement between two directly connected devices. When a packet arrives at the Data Link Layer, it is encapsulated into a <strong style="font-weight: 800;">frame</strong>. This frame includes a different type of address known as a physical address or <strong style="font-weight: 800;">Media Access Control (MAC) address</strong>. This address is unique to the network interface card (NIC) of the device and is assigned by the manufacturer.</p>
+
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">The Data Link Layer is also responsible for "media access control," which means it decides when it is safe for a device to transmit on the physical wire to avoid collisions with other devices. It provides a level of error detection for the local link, ensuring that the signals received haven't been corrupted by electrical interference. Because different physical environments (like Wi-Fi vs. Ethernet) have different rules for how to behave on the wire, the Data Link Layer acts as the bridge between the logical world of software and the physical world of hardware.</p>
+
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">Finally, we reach <strong style="font-weight: 800;">Layer 1</strong>, the <strong style="font-weight: 800;">Physical Layer</strong>. This is the only layer where the data is actually moved physically across the world. At this level, the data is no longer organized into packets or frames; it is simply a stream of <strong style="font-weight: 800;">bits</strong>—ones and zeros. The Physical Layer defines the mechanical, electrical, and functional specifications for the physical link. This includes the shape of the cables, the pinouts of the connectors, the voltage levels used to represent a "1" or a "0," and even the pulses of light in a fiber optic strand. If you are troubleshooting a network and you find a broken cable or a loose plug, you are working at the Physical Layer. It provides the "pipes" through which all the higher-level logic must eventually flow.</p>
+
+<details style="background-color: #F5F5F5; border: 3px solid #000000; padding: 1.5em; margin: 2em 0; max-width: 75ch;">
+  <summary style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.1em; font-weight: 700; cursor: pointer; letter-spacing: 0.02em; color: #000000;">
+    ✦ KNOWLEDGE CHECK: Which layer is responsible for "hop-by-hop" delivery and MAC addressing?</summary>
+  <p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; margin-top: 1em; border-top: 2px solid #E0E0E0; padding-top: 1em; margin-bottom: 0; color: #000000;">
+    <strong style="font-weight: 800;">Answer:</strong> The Data Link Layer (Layer 2) handles hop-by-hop delivery between directly connected devices using physical MAC addresses.</p>
+</details>
+
+<hr style="border: none; border-top: 3px solid #000000; margin: 3em auto; width: 70%;">
+
+<h3 style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.5em; font-weight: 700; letter-spacing: 0.03em; border-left: 6px solid #000000; padding-left: 0.75em; margin-top: 2em; margin-bottom: 1em; color: #000000;">The Dance of Encapsulation and Decapsulation</h3>
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">To truly understand the OSI model, one must visualize how data travels through these layers in a process called <strong style="font-weight: 800;">encapsulation</strong>. Imagine you are the sender. When you click "send" on an application, the data starts at Layer 7 and moves down the stack. Each layer takes the data from the layer above and wraps it in its own "header" (and sometimes a "trailer"),
+</p>
+<figure style="margin: 2em 0; max-width: 75ch;">
+  <img style="width: 100%; height: auto; border: 1px solid #E0E0E0; border-radius: 4px;"
+       src="https://ik.imagekit.io/blamb/lms-content/fig2-20260102-152608_GFktfauj7.png"
+       alt="Diagram showing data being wrapped in headers and trailers as it moves down the OSI layers, forming segments and packets."
+       loading="lazy" />
+  <figcaption style="padding: 0.75em 1em; font-style: italic; background-color: #F5F5F5; text-align: center; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 16px; color: #333333; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;">
+    Figure 2: The process of encapsulation, where data is wrapped in layer-specific headers and trailers as it moves down the stack. <em>(Generated by AI)</em>
+  </figcaption>
+</figure>
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">
+ much like placing a letter inside a series of increasingly larger envelopes.</p>
+
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">At Layer 4, the data gets a header that includes port numbers, creating a segment. That segment is handed to Layer 3, which wraps it in a header containing IP addresses, creating a packet. Layer 3 hands that packet to Layer 2, which wraps it in a header and trailer containing MAC addresses, creating a frame. Finally, Layer 1 converts that frame into electrical or optical signals—bits—and sends them across the wire. This "packaging" is encapsulation. Each layer only talks to its corresponding layer on the receiving end. The Network Layer on the receiving computer doesn't care what the Application Layer sent; it only cares about the IP header that its counterpart at the sending end created.</p>
+
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">When the bits arrive at the destination, the process reverses in what is known as <strong style="font-weight: 800;">decapsulation</strong>. The receiving computer's Physical Layer picks up the signals and passes them to the Data Link Layer. Layer 2 strips off the frame header and trailer, checks for errors, and passes the remaining packet up to Layer 3. Layer 3 strips off the IP header and passes the segment up to Layer 4. This continues until only the original data remains, which is then presented to the application. This layered approach ensures that the "envelope" used for transport never interferes with the "letter" inside.</p>
+
+<details style="background-color: #F5F5F5; border: 3px solid #000000; padding: 1.5em; margin: 2em 0; max-width: 75ch;">
+  <summary style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.1em; font-weight: 700; cursor: pointer; letter-spacing: 0.02em; color: #000000;">
+    ✦ KNOWLEDGE CHECK: What happens to data as it moves from Layer 3 to Layer 2 during encapsulation?</summary>
+  <p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; margin-top: 1em; border-top: 2px solid #E0E0E0; padding-top: 1em; margin-bottom: 0; color: #000000;">
+    <strong style="font-weight: 800;">Answer:</strong> The Network Layer packet is handed down to the Data Link Layer, which wraps it in a header and trailer containing MAC addresses, transforming the packet into a frame.</p>
+</details>
+
+<hr style="border: none; border-top: 3px solid #000000; margin: 3em auto; width: 70%;">
+
+<h3 style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.5em; font-weight: 700; letter-spacing: 0.03em; border-left: 6px solid #000000; padding-left: 0.75em; margin-top: 2em; margin-bottom: 1em; color: #000000;">A Walkthrough: Retrieving a File from a Remote Server</h3>
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">To see the OSI model in action, let us walk through the process of a user requesting a simple text file from a remote server. The process begins at the Application Layer (Layer 7) when the user's software issues a request using a protocol like File Transfer Protocol (FTP). The Application Layer identifies that the user wants to initiate a data transfer. This request moves to the Presentation Layer (Layer 6), which ensures the data format is standardized—perhaps ensuring that a file stored on a Linux server will be properly interpreted by the user's Windows machine. Next, the Session Layer (Layer 5) establishes a connection "dialogue" between the two computers, ensuring that the request and the eventual response are linked together.</p>
+
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">The request then moves to the Transport Layer (Layer 4). Here, the system chooses a reliable protocol to ensure the file arrives without missing pieces. It assigns a source port (representing the specific window or tab the user is using) and a destination port (representing the file service on the server). The data is broken into segments. These segments are handed to the Network Layer (Layer 3), where the system attaches the sender’s IP address and the server’s IP address. This creates packets that can be routed across the vast complexity of the internet.</p>
+
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">Now at the Data Link Layer (Layer 2), the packets are placed into frames. The system adds the MAC address of the local router—the "next hop" on the journey. Finally, the Physical Layer (Layer 1) converts these frames into a series of voltage changes on a copper cable or light pulses in a fiber optic line. These pulses travel across the world, passing through various routers that look at the Layer 3 information to guide them. When they arrive at the server, the server performs decapsulation, stripping away the physical signals, the MAC addresses, the IP addresses,
+</p>
+<figure style="margin: 2em 0; max-width: 75ch;">
+  <img style="width: 100%; height: auto; border: 1px solid #E0E0E0; border-radius: 4px;"
+       src="https://ik.imagekit.io/blamb/lms-content/fig3-20260102-152608_JP7e6nDGrB.png"
+       alt="A diagram showing data flowing down the sender's OSI stack and up the receiver's stack across a network connection."
+       loading="lazy" />
+  <figcaption style="padding: 0.75em 1em; font-style: italic; background-color: #F5F5F5; text-align: center; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 16px; color: #333333; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;">
+    Figure 3: End-to-end communication showing the flow of data through encapsulation on the sender and decapsulation on the receiver. <em>(Generated by AI)</em>
+  </figcaption>
+</figure>
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">
+ and the transport headers until the server’s FTP application finally receives the request: "Please send the text file." The server then begins the entire process in reverse to send the file back to the user.</p>
+
+<details style="background-color: #F5F5F5; border: 3px solid #000000; padding: 1.5em; margin: 2em 0; max-width: 75ch;">
+  <summary style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.1em; font-weight: 700; cursor: pointer; letter-spacing: 0.02em; color: #000000;">
+    ✦ KNOWLEDGE CHECK: In the file retrieval example, which layer ensures the Linux server's data is readable by a Windows machine?</summary>
+  <p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; margin-top: 1em; border-top: 2px solid #E0E0E0; padding-top: 1em; margin-bottom: 0; color: #000000;">
+    <strong style="font-weight: 800;">Answer:</strong> The Presentation Layer (Layer 6) handles this translation to ensure data compatibility between different operating systems.</p>
+</details>
+
+<hr style="border: none; border-top: 3px solid #000000; margin: 3em auto; width: 70%;">
+
+<h3 style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.5em; font-weight: 700; letter-spacing: 0.03em; border-left: 6px solid #000000; padding-left: 0.75em; margin-top: 2em; margin-bottom: 1em; color: #000000;">Summary</h3>
+<p style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; word-spacing: 0.05em; margin-bottom: 1.5em; max-width: 75ch; color: #000000;">The OSI reference model is a foundational concept in information technology that categorizes the complex process of network communication into seven manageable layers. By moving from the user-facing Application Layer down to the hardware-centric Physical Layer, the model provides a standardized framework for how data is prepared, addressed, routed, and transmitted. The upper layers (Application, Presentation, and Session) focus on data formatting and dialogue management, while the lower layers (Transport, Network, Data Link, and Physical) handle the technical delivery of data across the network. Central to this process is encapsulation, where each layer adds its own control information to the data, and decapsulation, where that information is removed by the receiver. This modularity allows for diverse technologies to work together, ensuring that the internet remains an open and evolving system.</p>
+
+<hr style="border: none; border-top: 3px solid #000000; margin: 3em auto; width: 70%;">
+
+<h3 style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.5em; font-weight: 700; letter-spacing: 0.03em; border-left: 6px solid #000000; padding-left: 0.75em; margin-top: 2em; margin-bottom: 1em; color: #000000;">Glossary of Key Terms</h3>
+<dl style="margin-bottom: 2em; border-left: 4px solid #000000; padding-left: 1.5em; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; max-width: 75ch;">
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">Application Layer (Layer 7)</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The layer providing the interface between the software application and the network protocols (e.g., HTTP, FTP).</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">Data Link Layer (Layer 2)</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The layer responsible for hop-by-hop delivery, physical addressing (MAC addresses), and media access control.</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">Decapsulation</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The process of removing headers and trailers from data as it moves up the OSI stack on the receiving device.</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">Encapsulation</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The process of wrapping data in headers and trailers as it moves down the OSI stack on the sending device.</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">Frame</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The Protocol Data Unit (PDU) at the Data Link Layer (Layer 2).</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">IP Address</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">A logical numerical label assigned to each device participating in a network that uses the Internet Protocol for communication (Layer 3).</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">ISO (International Organization for Standardization)</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The international body that developed the OSI reference model.</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">MAC Address (Media Access Control)</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">A unique physical identifier assigned to a network interface controller (Layer 2).</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">Network Layer (Layer 3)</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The layer responsible for logical addressing and determining the best path for data across interconnected networks (routing).</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">OSI (Open Systems Interconnection) Model</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">A seven-layer conceptual framework used to understand and implement network communications.</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">Packet</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The Protocol Data Unit (PDU) at the Network Layer (Layer 3).</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">Physical Layer (Layer 1)</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The layer concerned with the transmission of raw bits over a physical medium (cables, connectors, signals).</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">Presentation Layer (Layer 6)</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The layer responsible for data translation, encryption, and compression.</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">PDU (Protocol Data Unit)</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">A generic term for the data package at any given layer of the OSI model (e.g., Segment, Packet, Frame).</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">Segment</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The Protocol Data Unit (PDU) at the Transport Layer (Layer 4).</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">Session Layer (Layer 5)</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The layer that manages the establishment, maintenance, and termination of dialogues between computers.</dd>
+  
+  <dt style="font-size: 1.1em; font-weight: 800; letter-spacing: 0.02em; margin-top: 1.5em; margin-bottom: 0.25em; color: #000000;">Transport Layer (Layer 4)</dt>
+  <dd style="font-size: 18px; line-height: 1.8; margin-left: 0; margin-bottom: 1em; padding-left: 1em; border-left: 2px solid #E0E0E0; color: #000000;">The layer responsible for end-to-end communication, segmentation, and error recovery/reliability.</dd>
+</dl>

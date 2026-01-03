@@ -1,0 +1,133 @@
+```html
+<h2>Introduction to Algorithms and Data Structures</h2>
+
+<h3>Learning Objectives</h3>
+<ul>
+  <li>Explain why algorithms and data structures form the foundation of effective computer science practice and distinguish between them conceptually</li>
+  <li>Identify common algorithmic patterns and data structure choices in real-world software and evaluate their trade-offs</li>
+  <li>Apply basic complexity analysis to compare algorithm efficiency and make informed design decisions</li>
+</ul>
+
+<h3>What Are Algorithms and Data Structures?</h3>
+
+<p>Before diving into code, let's establish what we're actually studying. An <strong>algorithm</strong> is a step-by-step procedure for solving a problem or completing a task. Think of it as a recipe: it specifies exactly what operations to perform, in what order, to produce a desired outcome. The algorithm doesn't care whether you're using Java, Python, or pencil and paper—it's the logic itself that matters.</p>
+
+<p>A <strong>data structure</strong>, by contrast, is an organized way of storing and managing information in a computer's memory. It determines how data is arranged, how quickly you can access or modify it, and how much space it consumes. If an algorithm is the recipe, a data structure is the kitchen and pantry: it shapes what ingredients you can reach and how efficiently you can work.</p>
+
+<p>Here's a practical truth: choosing the right data structure and the right algorithm to go with it is often the difference between software that responds in milliseconds and software that makes users wait for minutes. A poorly chosen combination can make a task computationally infeasible, while a well-chosen pair can make it trivial. This is not an exaggeration. Computer scientists and software engineers spend careers getting this balance right.</p>
+
+<h3>Why This Matters: Context and History</h3>
+
+<p>In the 1950s and 1960s, computers had severe memory and processing limitations. Donald Knuth and others began studying algorithms systematically because inefficiency wasn't just slow—it was wasteful of expensive resources. Knuth's multivolume work "The Art of Computer Programming" established that algorithm analysis itself deserved serious mathematical treatment.</p>
+
+<p>Today, constraints have shifted. Modern computers have abundant memory and processor power, which sometimes makes developers complacent about efficiency. Yet the fundamentals haven't changed. Now we work with massive datasets—billions of social media records, real-time traffic systems, genome sequences. An inefficient algorithm that works fine on a small input may become unusable when data scales up. Choosing algorithms wisely is how Netflix streams video without buffering, how Google finds results in milliseconds, and how scientists process genetic data.</p>
+
+<p>Understanding algorithms and data structures teaches you to think analytically about problems before you code. It's a form of computational thinking that transcends any single programming language.</p>
+
+<h3>Analyzing Algorithm Efficiency: Big O Notation</h3>
+
+<p>When comparing algorithms, we need a language to describe their efficiency. Big O notation (developed formally in the 1970s, though with roots in mathematical analysis) gives us that language. Big O describes how an algorithm's runtime or memory usage grows as the input size increases.</p>
+
+<p>Consider a simple task: searching for a name in a phone book. If the phone book is sorted and you use binary search—opening to the middle, eliminating half the remaining names with each step—you need roughly log₂(n) steps, where n is the number of names. This is written as O(log n). By contrast, if you check every name one by one from the beginning, you need up to n steps, written as O(n). When the phone book contains a million names, binary search needs about twenty steps while linear search needs a million.</p>
+
+<p>Big O notation ignores constant factors and lower-order terms because they become irrelevant at scale. An algorithm that takes 3n steps and one that takes 100n steps are both O(n)—they grow at the same rate as n increases, even though the second is much slower in practice. This abstraction lets us reason about fundamental differences without getting bogged down in implementation details.</p>
+
+<p>The most common Big O categories, from fastest to slowest, are O(1) (constant time—always the same number of steps regardless of input size), O(log n) (logarithmic—halving the problem repeatedly), O(n) (linear—growing proportionally with input), O(n log n) (linearithmic), O(n²) (quadratic—often from nested loops), O(2ⁿ) (exponential—catastrophically slow), and O(n!) (factorial—nearly impossible for large n). Learning to recognize these patterns in code is a critical skill.</p>
+
+<h3>Fundamental Data Structures: Arrays and Linked Lists</h3>
+
+<p>Let's examine two basic yet important structures that illustrate core trade-offs. An <strong>array</strong> stores elements in contiguous memory locations. This means accessing any element by its position (its index) is lightning-fast: grab the memory address of the first element, add the index, and jump there instantly. This operation is O(1), constant time. However, inserting or deleting an element in the middle of an array requires shifting all subsequent elements, which is O(n) in the worst case.</p>
+
+<p>A <strong>linked list</strong>, by contrast, chains elements together using pointers or references. Each node holds data and a reference to the next node. Inserting or deleting a node is fast if you're already at that position—just update the pointers, O(1). But finding an element requires walking from the beginning of the list, checking each node until you find the target. This is O(n). Memory is not contiguous, which can hurt performance due to how modern CPU caches work, and the pointers themselves consume extra memory.</p>
+
+<p>Choosing between them depends on your use case. If you'll frequently access elements by position and rarely insert or delete, use an array. If you'll frequently insert and delete but rarely need random access, a linked list might be better. This is the essence of data structure selection: there is rarely a universally "best" choice, only the best choice for your specific problem.</p>
+
+<h3>Common Data Structures and Their Roles</h3>
+
+<p>Beyond arrays and linked lists, several other structures appear constantly. A <strong>stack</strong> is a Last-In-First-Out (LIFO) structure—like a stack of dinner plates, you remove the top plate first. Stacks are perfect for problems involving nested structures, like matching parentheses in code or undoing operations in an editor. A <strong>queue</strong> is First-In-First-Out (FIFO)—like waiting in line, the person who arrived first leaves first. Queues model real-world processes like printer job scheduling and breadth-first search through graphs.</p>
+
+<p>A <strong>hash table</strong> (also called a hash map or dictionary in many languages) stores key-value pairs and uses a hash function to compute where each item should be stored. Lookups, insertions, and deletions are O(1) on average, making hash tables incredibly useful. The trade-off is that they use more memory than a sorted structure and can behave poorly if the hash function is bad or if many collisions occur (when two keys hash to the same location).</p>
+
+<p>A <strong>tree</strong> is a hierarchical structure with a root node and branches leading to child nodes. Binary trees, where each node has at most two children, are especially common. A binary search tree maintains data in sorted order while allowing efficient searching, insertion, and deletion—all O(log n) if the tree stays balanced. Trees appear everywhere: file systems are trees, so are DOM structures in web pages, and so are decision-making algorithms.</p>
+
+<p>A <strong>graph</strong> generalizes trees by allowing nodes to connect in arbitrary ways. Graphs model networks—social networks, computer networks, transportation networks. Algorithms on graphs solve problems like finding the shortest path between two cities or detecting cycles.</p>
+
+<h3>Sorting and Searching: Practical Algorithms</h3>
+
+<p>Let's examine two concrete algorithms to cement our understanding. Consider sorting: arranging data in order. Bubble sort, which repeatedly swaps adjacent out-of-order elements until the list is sorted, is O(n²). It's simple to understand and implement, making it useful for teaching, but terrible for large datasets. Merge sort divides the list in half, recursively sorts each half, then merges them. Crucially, merging two sorted lists is O(n), so merge sort achieves O(n log n) overall—much better. The trade-off is that merge sort uses extra memory for the temporary lists it creates during merging.</p>
+
+<p>Now consider searching. Linear search checks every element until it finds the target: O(n). Binary search only works on sorted data but repeatedly eliminates half the remaining possibilities: O(log n). For a million items, linear search might need a million checks; binary search needs about twenty. This difference is why databases maintain sorted indexes on frequently searched columns.</p>
+
+<p>Both sorting and searching appear constantly in real applications. Understanding their algorithms and trade-offs helps you know when to sort data upfront (paying an O(n log n) cost once) versus searching unsorted data repeatedly (paying O(n) each time).</p>
+
+<h3>A Concrete Example: Duplicate Detection</h3>
+
+<p>Let's walk through a practical problem to see these ideas in action. Suppose you're building a system to check whether a batch of user registration requests contains any duplicate usernames. Your input is a list of, say, one million usernames, and you need to detect any that appear more than once.</p>
+
+<p>The naive approach: for each username, compare it to all others. This is two nested loops, O(n²). For a million names, that's a trillion comparisons. Depending on your hardware, this might take hours.</p>
+
+<p>A better approach: add each name to a hash set as you process it. Before adding, check if it's already there. Checking and adding are both O(1) on average, so processing a million names is O(n). This completes in milliseconds.</p>
+
+<p>Why the dramatic difference? The hash set is a data structure chosen specifically to solve the problem efficiently. It trades some memory (storing the names temporarily) for massive time savings. This is the computation thinking at work: you don't just code up a solution, you analyze the problem, choose appropriate tools, and verify your approach will scale.</p>
+
+<h3>Connecting Theory to Implementation</h3>
+
+<p>You might wonder: why does this matter if Java's built-in libraries already have sorted and hash sets? That's a fair question. The answer has two parts. First, understanding the internals helps you use library functions correctly. Java's Collections framework contains multiple implementations—ArrayList versus LinkedList, HashMap versus TreeMap—and knowing their complexities helps you choose the right one.</p>
+
+<p>Second, and more importantly, real problems often don't fit neatly into existing structures. You might need a specialized variant, or you might need to combine structures in a clever way. Understanding fundamentals gives you the vocabulary and mental models to design novel solutions. Companies like Google, Amazon, and Netflix hire based partly on algorithm and data structure knowledge precisely because these skills transfer across all problems and languages.</p>
+
+<hr>
+
+<h3>Summary</h3>
+
+<p>Algorithms are step-by-step procedures for solving problems; data structures are organized ways of storing information. Together, they form the backbone of computer science. Choosing them wisely determines whether your software is snappy or sluggish, whether it can handle real-world scale or collapses under load.</p>
+
+<p>Big O notation lets us analyze efficiency abstractly, comparing approaches without implementation details. The fundamental data structures—arrays, linked lists, stacks, queues, hash tables, trees, and graphs—each excel at different tasks. Common algorithms like sorting and searching have been thoroughly studied; understanding their complexities helps you apply them effectively.</p>
+
+<p>More broadly, studying algorithms and data structures teaches you to think computationally: to analyze problems before coding, to consider trade-offs deliberately, and to estimate whether a solution will work at scale. This skill transfers across programming languages, problem domains, and your entire career.</p>
+
+<hr>
+
+<h3>Glossary of Key Terms</h3>
+
+<dl>
+  <dt>Algorithm</dt>
+  <dd>A step-by-step procedure for solving a problem or accomplishing a task, independent of any programming language.</dd>
+
+  <dt>Binary Search</dt>
+  <dd>A O(log n) search algorithm that works on sorted data by repeatedly eliminating half the remaining possibilities.</dd>
+
+  <dt>Big O Notation</dt>
+  <dd>Mathematical notation describing how an algorithm's runtime or memory grows as input size increases, ignoring constant factors and lower-order terms.</dd>
+
+  <dt>Data Structure</dt>
+  <dd>An organized way of storing and managing information in memory, determining access speed, modification speed, and memory consumption.</dd>
+
+  <dt>Graph</dt>
+  <dd>A collection of nodes (vertices) connected by edges, with no hierarchical constraint; generalizes tree structures to allow arbitrary connections.</dd>
+
+  <dt>Hash Table</dt>
+  <dd>A data structure that uses a hash function to compute where key-value pairs are stored, enabling O(1) average-case lookups, insertions, and deletions.</dd>
+
+  <dt>Hash Set</dt>
+  <dd>A hash table variant that stores unique values (without associated data) for fast membership checking.</dd>
+
+  <dt>Linear Search</dt>
+  <dd>A O(n) search algorithm that checks elements one-by-one until the target is found.</dd>
+
+  <dt>Linked List</dt>
+  <dd>A data structure where elements are chained together by pointers or references, enabling O(1) insertion and deletion (if positioned at the insertion point) but O(n) access.</dd>
+
+  <dt>Merge Sort</dt>
+  <dd>A O(n log n) sorting algorithm that divides data in half, recursively sorts each half, then merges the sorted halves.</dd>
+
+  <dt>Queue</dt>
+  <dd>A First-In-First-Out (FIFO) data structure where elements are added at one end and removed from the other.</dd>
+
+  <dt>Stack</dt>
+  <dd>A Last-In-First-Out (LIFO) data structure where elements are added and removed from the same end.</dd>
+
+  <dt>Tree</dt>
+  <dd>A hierarchical data structure with a root node and branches leading to child nodes, used to represent hierarchical relationships and enable efficient searching.</dd>
+</dl>
+```
