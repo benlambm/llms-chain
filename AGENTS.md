@@ -1,32 +1,36 @@
 # Repository Guidelines
 
+## Overview
+This repo hosts an OpenAI-based prompt-chaining pipeline that generates Canvas LMS-ready HTML accessible Pages with ImageKit-hosted images. The primary entry point is `openai_lms_pipeline.py`, which must use the OpenAI Responses API for text generation and the Images API for native image generation.
+
 ## Project Structure & Module Organization
-- `anthropic/`: Main pipeline scripts (`lms_pipeline.py`, `anthropic_lms_chain.py`, `lms_image_enhancer.py`), templates, and sample outputs.
-- `prompts/`: Prompt text files for each agent and content type.
-- `gemini_lms_pipeline.py`: Alternate entry point for Gemini-backed runs.
-- `lms_output_*/`: Generated run artifacts (HTML, images, logs). Treat as build outputs.
+- `openai_lms_pipeline.py`: OpenAI pipeline (Agents A–D) using Responses + Images APIs.
+- `gemini_lms_pipeline.py`: Legacy Gemini pipeline (reference only).
+- `prompts/`: Agent prompts shared across pipelines.
+- `lms_output_*/`: Generated output artifacts (HTML, images, logs).
 
 ## Build, Test, and Development Commands
-- `python anthropic/lms_pipeline.py`: Run the interactive LMS pipeline.
-- `python anthropic/lms_pipeline.py --type textbook --topic "..."`: CLI mode for a specific content type.
-- `python anthropic/anthropic_lms_chain.py`: Run Agents A–C only (no image generation).
-- `python anthropic/lms_image_enhancer.py input.html output.html`: Add images to existing HTML.
-- `pip install -r anthropic/requirements.txt`: Install Python dependencies.
+- `python -m venv .venv && source .venv/bin/activate`: Create/activate venv.
+- `pip install -r requirements.txt`: Install dependencies.
+- `python openai_lms_pipeline.py`: Run the OpenAI pipeline (interactive).
+
+## OpenAI API Usage (Required)
+- Use `from openai import OpenAI` and `client = OpenAI()`.
+- All text stages must call `client.responses.create(...)` and extract text via a robust helper (see `text_from_response` in `openai_lms_pipeline.py`).
+- Image generation must call `client.images.generate(model="gpt-image-1.5", ...)` and decode `b64_json`.
+- Agent models are fixed:
+  - Agent A: `gpt-5.2` with `reasoning={"effort":"high"}`.
+  - Agents B/C/D: `gpt-5-mini` with no temperature/top_p.
+
+## Note (For Agents)
+The OpenAI pipeline uses the Responses API, not Chat Completions. Use client.responses.create(…) for all text agents and client.images.generate(…) for image generation. Do not attempt to fetch platform.openai.com/docs from the agent; those pages may be blocked by Cloudflare. For API fields and request/response shapes, consult vendor/openai.openapi.documented.yml (downloaded from the OpenAI OpenAPI spec). For GPT-5.2: if reasoning.effort is set to low/medium/high/xhigh, do not pass temperature/top_p/logprobs, as those are only supported when reasoning.effort is none.
 
 ## Coding Style & Naming Conventions
-- Python 3.10+ code; follow PEP 8 style and 4-space indentation.
-- Prefer descriptive, snake_case function and variable names.
+- Python 3.10+; 4-space indentation; PEP 8 conventions.
 - Keep prompts in `prompts/` with names like `agent_a_textbook.txt`.
 
 ## Testing Guidelines
-- No automated test suite is present. If you add tests, place them under `tests/` and name files `test_*.py`.
-- When modifying pipelines, do a local smoke run with a short topic to validate output files.
-
-## Commit & Pull Request Guidelines
-- Git history is minimal (initial commit only), so no established commit format.
-- Use concise, imperative commit messages (e.g., "Add image enhancer CLI flags").
-- PRs should include: summary of changes, example command used, and sample output path if it affects HTML generation.
+- No automated tests yet. For changes, do a short manual run and confirm outputs in `lms_output_*/content/`.
 
 ## Configuration & Secrets
-- Store API keys in environment variables (`ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `IMAGEKIT_PRIVATE_KEY`).
-- Avoid committing generated outputs or secrets; prefer `.env` locally.
+- Required env vars: `OPENAI_API_KEY`, `IMAGEKIT_PRIVATE_KEY`, `IMAGEKIT_PUBLIC_KEY`, `IMAGEKIT_URL_ENDPOINT`.
