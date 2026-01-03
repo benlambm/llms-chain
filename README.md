@@ -39,7 +39,7 @@ python openai_lms_pipeline.py --type textbook --topic "Machine Learning fundamen
 Resume from an existing Step 1 draft (skips Agent A):
 
 ```bash
-python openai_lms_pipeline.py --input-file lms_output_YYYYMMDD-HHMMSS/content/Step1_Content.txt
+python openai_lms_pipeline.py --input-file lms_output/1-3-2026_11_22/content/Step1_Content.txt
 ```
 
 Options:
@@ -49,7 +49,7 @@ Options:
 
 ## Outputs
 
-Runs create `lms_output_YYYYMMDD-HHMMSS/` with:
+Runs create `lms_output/1-3-2026_11_22/` (month-day-year_hour_minute) with:
 
 - `content/Step1_Content.txt`, `Step2_Structured.html`, `Step3_Styled.html`,
   `Step4_Final.html` (if images enabled)
@@ -57,4 +57,4 @@ Runs create `lms_output_YYYYMMDD-HHMMSS/` with:
 - `pipeline.log`
 
 A convenience copy of the final HTML is also saved to
-`lms_output_YYYYMMDD-HHMMSS.html` in the repo root.
+`lms_output/lms_output_1-3-2026_11_22.html`.

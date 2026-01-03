@@ -4,10 +4,15 @@
 This repo hosts an OpenAI-based prompt-chaining pipeline that generates Canvas LMS-ready HTML accessible Pages with ImageKit-hosted images. The primary entry point is `openai_lms_pipeline.py`, which must use the OpenAI Responses API for text generation and the Images API for native image generation.
 
 ## Project Structure & Module Organization
-- `openai_lms_pipeline.py`: OpenAI pipeline (Agents A–D) using Responses + Images APIs.
+- `openai_lms_pipeline.py`: CLI entry point for the OpenAI pipeline.
+- `pipeline/cli.py`: CLI orchestration and argument parsing.
+- `pipeline/stages.py`: Agent stages and DOM-aware image insertion.
+- `pipeline/openai_client.py`: Responses API helpers (text + structured JSON).
+- `pipeline/config.py`: Constants and dataclasses.
+- `pipeline/io.py`: Logging, manifests, and preview server.
 - `gemini_lms_pipeline.py`: Legacy Gemini pipeline (reference only).
 - `prompts/`: Agent prompts shared across pipelines.
-- `lms_output_*/`: Generated output artifacts (HTML, images, logs).
+- `lms_output/`: Generated output artifacts (HTML, images, logs).
 
 ## Build, Test, and Development Commands
 - `python -m venv .venv && source .venv/bin/activate`: Create/activate venv.
@@ -16,7 +21,7 @@ This repo hosts an OpenAI-based prompt-chaining pipeline that generates Canvas L
 
 ## OpenAI API Usage (Required)
 - Use `from openai import OpenAI` and `client = OpenAI()`.
-- All text stages must call `client.responses.create(...)` and extract text via a robust helper (see `text_from_response` in `openai_lms_pipeline.py`).
+- All text stages must call `client.responses.create(...)` and extract text via the helper in `pipeline/openai_client.py`.
 - Image generation must call `client.images.generate(model="gpt-image-1.5", ...)` and decode `b64_json`.
 - Agent models are fixed:
   - Agent A: `gpt-5.2` with `reasoning={"effort":"high"}`.
@@ -30,7 +35,7 @@ The OpenAI pipeline uses the Responses API, not Chat Completions. Use client.res
 - Keep prompts in `prompts/` with names like `agent_a_textbook.txt`.
 
 ## Testing Guidelines
-- No automated tests yet. For changes, do a short manual run and confirm outputs in `lms_output_*/content/`.
+- No automated tests yet. For changes, do a short manual run and confirm outputs in `lms_output/*/content/`.
 
 ## Configuration & Secrets
 - Required env vars: `OPENAI_API_KEY`, `IMAGEKIT_PRIVATE_KEY`, `IMAGEKIT_PUBLIC_KEY`, `IMAGEKIT_URL_ENDPOINT`.

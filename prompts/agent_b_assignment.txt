@@ -16,7 +16,6 @@ Structure Guidelines:
 - Use <dl>/<dt>/<dd> specifically for Glossary or Key Terms
 - Use <strong> for key terms when they are first defined in the text
 - Use <em> for emphasis where appropriate
-- Use <hr> to separate major sections
 
 Assignment-Specific Structure:
 - The main title uses <h2>
@@ -25,4 +24,3 @@ Assignment-Specific Structure:
 - "Deliverables" section uses <h3>Deliverables</h3>
 - "Evaluation/Rubric" section uses <h3>Evaluation/Rubric</h3>
 - If "Key Terms" exists, use <h3>Key Terms</h3> followed by <dl>/<dt>/<dd>
-- Use <hr> between major sections

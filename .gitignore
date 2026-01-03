@@ -48,5 +48,7 @@ scripts/
 # Project outputs
 lms_output_*/
 lms_output_*.html
+lms_output/
+lms_output/*.html
 anthropic/
 vendor/
