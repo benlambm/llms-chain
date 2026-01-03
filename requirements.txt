@@ -1,0 +1,5 @@
+# Gemini LMS Pipeline dependencies
+# Install with: pip install -r requirements.txt
+
+google-genai>=1.0.0
+imagekitio>=5.0.0
