@@ -10,6 +10,10 @@ Task:
    - Comparisons could be illustrated
    - Technical architectures could be shown
 
+Placement rules:
+- Choose insertion points only in the main instructional narrative (Core Content).
+- Avoid Knowledge Checks (<details> blocks), Summary, and Glossary sections.
+
 For each location, provide:
 - "insertion_context": A UNIQUE, VERBATIM snippet of 10-20 words from the HTML content 
   IMMEDIATELY AFTER which the image should appear. This MUST be an exact character-for-character 
@@ -19,7 +23,7 @@ For each location, provide:
 
 - "alt_text": Descriptive alt text for accessibility (max 125 characters).
 
-- "caption": A figure caption starting with "Figure [N]:" that explains what the image illustrates.
+- "caption": A figure caption (do NOT include a Figure number; numbering is added later).
 
 Output Format:
 Return ONLY a valid JSON object:
@@ -29,7 +33,7 @@ Return ONLY a valid JSON object:
       "insertion_context": "exact verbatim text from source",
       "image_prompt": "detailed generation prompt",
       "alt_text": "accessibility description",
-      "caption": "Figure 1: Explanation"
+      "caption": "Concise explanation of what the image illustrates"
     }
   ]
 }
