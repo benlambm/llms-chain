@@ -213,8 +213,7 @@ def save_final_output(state: PipelineState) -> Path:
     output_path = state.config.content_dir / step_name
     output_path.write_text(final_html, encoding="utf-8")
 
-    root_copy_dir = state.config.output_dir.parent
-    root_copy = root_copy_dir / f"lms_output_{state.config.timestamp}.html"
+    root_copy = state.config.output_dir / f"lms_output_{state.config.timestamp}.html"
     root_copy.write_text(final_html, encoding="utf-8")
 
     return output_path

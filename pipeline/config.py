@@ -9,6 +9,7 @@ from typing import Any, Dict, Final, List, Optional
 
 class ContentType(Enum):
     """Supported LMS content types."""
+
     TEXTBOOK = "textbook"
     DISCUSSION = "discussion"
     ASSIGNMENT = "assignment"
@@ -17,6 +18,8 @@ class ContentType(Enum):
 # Model Configuration
 TEXT_MODEL_AGENT_A: Final[str] = "gpt-5.2"
 TEXT_MODEL_AGENT_BCD: Final[str] = "gpt-5-mini"
+# Agent D is explicitly gpt-5.1 (no reasoning mode requested)
+TEXT_MODEL_AGENT_D: Final[str] = "gpt-5.1"
 IMAGE_MODEL: Final[str] = "gpt-image-1.5"
 
 # Limits
@@ -42,7 +45,12 @@ IMAGE_PLAN_SCHEMA: Final[Dict[str, Any]] = {
                     "alt_text": {"type": "string"},
                     "caption": {"type": "string"},
                 },
-                "required": ["insertion_context", "image_prompt", "alt_text", "caption"],
+                "required": [
+                    "insertion_context",
+                    "image_prompt",
+                    "alt_text",
+                    "caption",
+                ],
                 "additionalProperties": False,
             },
         }
@@ -55,6 +63,7 @@ IMAGE_PLAN_SCHEMA: Final[Dict[str, Any]] = {
 @dataclass
 class ImagePlan:
     """Represents a planned image with its metadata."""
+
     insertion_context: str
     image_prompt: str
     alt_text: str
@@ -67,6 +76,7 @@ class ImagePlan:
 @dataclass
 class PipelineConfig:
     """Configuration for a pipeline run."""
+
     content_type: ContentType
     topic: str
     timestamp: str
@@ -74,6 +84,8 @@ class PipelineConfig:
     content_dir: Path
     images_dir: Path
     enable_images: bool
+    max_output_token_scale: float = 1.0
+    test_mode: bool = False
     imagekit_folder: str = DEFAULT_IMAGEKIT_FOLDER
     input_file: Optional[Path] = None
 
@@ -81,6 +93,7 @@ class PipelineConfig:
 @dataclass
 class PipelineState:
     """Holds state during pipeline execution."""
+
     config: PipelineConfig
     openai_client: Optional[object] = None
     imagekit_client: Optional[object] = None

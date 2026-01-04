@@ -76,15 +76,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-file", "-i", help="Path to Step1_Content.txt to skip Agent A")
     parser.add_argument("--no-images", action="store_true", help="Skip image generation")
     parser.add_argument("--force-images", action="store_true", help="Force image generation for non-textbooks")
+    parser.add_argument("--test", action="store_true", help="Run in test mode with reduced max_output_tokens")
     return parser.parse_args()
 
 
 def _format_timestamp(now: datetime) -> str:
     hour_12 = now.hour % 12 or 12
-    return f"{now.month}-{now.day}-{now.year}_{hour_12}_{now.minute:02d}"
+    return f"{now.month}-{now.day}-{now.year}_{hour_12}-{now.minute:02d}"
 
 
-def _prompt_paths(content_type: ContentType) -> dict[str, Path]:
+def _prompt_paths(content_type: ContentType, test_mode: bool) -> dict[str, Path]:
+    if test_mode:
+        return {
+            "agent_a": PROMPTS_DIR / "agent_a_test.txt",
+            "agent_b": PROMPTS_DIR / "agent_b_test.txt",
+            "agent_c": PROMPTS_DIR / "agent_c_test.txt",
+            "agent_d_brainstorm": PROMPTS_DIR / "agent_d_brainstorm_test.txt",
+        }
+
     prompt_paths = {
         "agent_a": PROMPTS_DIR / f"agent_a_{content_type.value}.txt",
         "agent_b": PROMPTS_DIR / f"agent_b_{content_type.value}.txt",
@@ -124,6 +133,9 @@ def main() -> int:
             print("\n📷 Image generation: Enabled (Local Only - ImageKit missing)")
     else:
         print("\n📷 Image generation: Skipped (default for this type)")
+
+    if args.test:
+        print("\n🧪 Test mode: max_output_tokens scaled to 10%")
 
     valid, missing = validate_environment(enable_images)
     if not valid:
@@ -181,6 +193,8 @@ def main() -> int:
         content_dir=content_dir,
         images_dir=images_dir,
         enable_images=enable_images,
+        max_output_token_scale=0.1 if args.test else 1.0,
+        test_mode=args.test,
         imagekit_folder=os.environ.get("IMAGEKIT_FOLDER", DEFAULT_IMAGEKIT_FOLDER),
         input_file=input_path,
     )
@@ -231,7 +245,7 @@ def main() -> int:
     state.save_log()
 
     if success:
-        prompt_paths = _prompt_paths(content_type)
+        prompt_paths = _prompt_paths(content_type, args.test)
         save_run_manifest(state, final_path, prompt_paths)
         print(f"\n✅ PIPELINE COMPLETE! Check directory: {output_dir}")
         if final_path:

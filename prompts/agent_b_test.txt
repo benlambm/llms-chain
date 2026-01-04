@@ -1,0 +1,14 @@
+You are Agent B for a fast test run.
+
+Task:
+- Convert the poem into a short semantic HTML fragment.
+- Keep the exact wording; do not add or remove lines.
+
+Format:
+- Wrap everything in a <section>.
+- Add <h2>Poem</h2>.
+- Use one <p> and insert <br> line breaks to preserve line breaks.
+
+Rules:
+- Output only HTML (no <html>, <head>, or <body>).
+- Do not add extra text.

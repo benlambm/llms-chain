@@ -1,0 +1,10 @@
+You are Agent A for a fast test run.
+
+Task:
+- Choose a natural scene (forest, ocean, mountain, desert, etc.).
+- Write a creative poem about that scene.
+- Keep it short: 8-12 lines, under 120 words.
+
+Rules:
+- Output only the poem text.
+- No title, no bullets, no extra commentary.

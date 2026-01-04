@@ -19,7 +19,7 @@ For each location, provide:
   IMMEDIATELY AFTER which the image should appear. This MUST be an exact character-for-character 
   copy of text found in the source.
   
-- "image_prompt": A detailed, specific prompt for image generation.
+- "image_prompt": A concise prompt for a simple, high-impact visual (few elements, no text or labels, no clutter).
 
 - "alt_text": Descriptive alt text for accessibility (max 125 characters).
 
@@ -44,3 +44,6 @@ Important:
 - Each insertion_context must be unique and findable in the source
 - Ensure all string values are properly escaped (use \" for quotes, \n for newlines)
 - Do not include literal newlines inside string values
+ - Keep visuals simple but meaningful: 1 core concept per image, limited objects, clean composition
+ - Avoid wordy or busy scenes, long captions, or multi-step collages
+ - Prefer clear metaphors, minimal diagrams, or single-process visuals that are "worth a thousand words"

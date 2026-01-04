@@ -25,7 +25,8 @@ This repo hosts an OpenAI-based prompt-chaining pipeline that generates Canvas L
 - Image generation must call `client.images.generate(model="gpt-image-1.5", ...)` and decode `b64_json`.
 - Agent models are fixed:
   - Agent A: `gpt-5.2` with `reasoning={"effort":"high"}`.
-  - Agents B/C/D: `gpt-5-mini` with no temperature/top_p.
+  - Agents B/C: `gpt-5-mini` with no temperature/top_p.
+  - Agent D: `gpt-5.1` with no temperature/top_p.
 
 ## Note (For Agents)
 The OpenAI pipeline uses the Responses API, not Chat Completions. Use client.responses.create(…) for all text agents and client.images.generate(…) for image generation. Do not attempt to fetch platform.openai.com/docs from the agent; those pages may be blocked by Cloudflare. For API fields and request/response shapes, consult vendor/openai.openapi.documented.yml (downloaded from the OpenAI OpenAPI spec). For GPT-5.2: if reasoning.effort is set to low/medium/high/xhigh, do not pass temperature/top_p/logprobs, as those are only supported when reasoning.effort is none.

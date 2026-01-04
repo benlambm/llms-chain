@@ -1,0 +1,6 @@
+[tool.ruff]
+line-length = 200
+ignore = ["E501"]
+
+[tool.ruff.lint]
+# Keep other defaults; only disabling long-line.

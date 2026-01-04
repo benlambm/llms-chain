@@ -19,6 +19,7 @@ from .config import (
     PROMPTS_DIR,
     TEXT_MODEL_AGENT_A,
     TEXT_MODEL_AGENT_BCD,
+    TEXT_MODEL_AGENT_D,
     ContentType,
     ImagePlan,
     PipelineState,
@@ -27,11 +28,26 @@ from .io import load_prompt, normalize_text, validate_html_fragment
 from .openai_client import generate_structured_json, generate_text
 
 
+def _scaled_max_tokens(state: PipelineState, base_tokens: int) -> int:
+    scaled = int(base_tokens * state.config.max_output_token_scale)
+    return max(1, scaled)
+
+
+def _log_agent_output(state: PipelineState, label: str, response_text: str) -> None:
+    if response_text:
+        state.log(f"[debug] {label} response:\n{response_text}", print_it=False)
+    else:
+        state.log(f"[debug] {label} response: <empty>", print_it=False)
+
+
 def stage_a_write_content(state: PipelineState) -> bool:
     """Agent A: Write educational content."""
     state.log("\n📝 [1/4] Agent A: Writing content...")
 
-    prompt_path = PROMPTS_DIR / f"agent_a_{state.config.content_type.value}.txt"
+    if state.config.test_mode:
+        prompt_path = PROMPTS_DIR / "agent_a_test.txt"
+    else:
+        prompt_path = PROMPTS_DIR / f"agent_a_{state.config.content_type.value}.txt"
     try:
         system_prompt = load_prompt(prompt_path)
     except FileNotFoundError as e:
@@ -44,9 +60,10 @@ def stage_a_write_content(state: PipelineState) -> bool:
             model=TEXT_MODEL_AGENT_A,
             system_prompt=system_prompt,
             user_prompt=state.config.topic,
-            max_output_tokens=12000,
+            max_output_tokens=_scaled_max_tokens(state, 8000),
             reasoning_effort="high",
         )
+        _log_agent_output(state, "Agent A", response_text)
 
         if not response_text.strip():
             state.log("    ❌ Empty response from Agent A")
@@ -69,7 +86,10 @@ def stage_b_structure_html(state: PipelineState) -> bool:
     """Agent B: Convert to semantic HTML."""
     state.log("\n🏗️  [2/4] Agent B: Structuring HTML...")
 
-    prompt_path = PROMPTS_DIR / f"agent_b_{state.config.content_type.value}.txt"
+    if state.config.test_mode:
+        prompt_path = PROMPTS_DIR / "agent_b_test.txt"
+    else:
+        prompt_path = PROMPTS_DIR / f"agent_b_{state.config.content_type.value}.txt"
     try:
         system_prompt = load_prompt(prompt_path)
     except FileNotFoundError as e:
@@ -82,8 +102,9 @@ def stage_b_structure_html(state: PipelineState) -> bool:
             model=TEXT_MODEL_AGENT_BCD,
             system_prompt=system_prompt,
             user_prompt=state.step_outputs["agent_a"],
-            max_output_tokens=14000,
+            max_output_tokens=_scaled_max_tokens(state, 9000),
         )
+        _log_agent_output(state, "Agent B", response_text)
 
         if not response_text.strip():
             state.log("    ❌ Empty response from Agent B")
@@ -105,7 +126,9 @@ def stage_c_style_publish(state: PipelineState) -> bool:
     """Agent C: Apply styles and accessibility features."""
     state.log("\n🎨 [3/4] Agent C: Styling and publishing...")
 
-    if state.config.content_type == ContentType.TEXTBOOK:
+    if state.config.test_mode:
+        prompt_path = PROMPTS_DIR / "agent_c_test.txt"
+    elif state.config.content_type == ContentType.TEXTBOOK:
         prompt_path = PROMPTS_DIR / "agent_c_textbook.txt"
     else:
         prompt_path = PROMPTS_DIR / "agent_c_discussion_assignment.txt"
@@ -122,8 +145,9 @@ def stage_c_style_publish(state: PipelineState) -> bool:
             model=TEXT_MODEL_AGENT_BCD,
             system_prompt=system_prompt,
             user_prompt=state.step_outputs["agent_b"],
-            max_output_tokens=16384,
+            max_output_tokens=_scaled_max_tokens(state, 12000),
         )
+        _log_agent_output(state, "Agent C", response_text)
 
         if not response_text.strip():
             state.log("    ❌ Empty response from Agent C")
@@ -147,30 +171,39 @@ def stage_d_brainstorm_images(state: PipelineState) -> bool:
     state.log("\n🧠 [4a/4] Agent D: Brainstorming images...")
 
     try:
-        system_prompt = load_prompt(PROMPTS_DIR / "agent_d_brainstorm.txt")
+        prompt_name = (
+            "agent_d_brainstorm_test.txt"
+            if state.config.test_mode
+            else "agent_d_brainstorm.txt"
+        )
+        system_prompt = load_prompt(PROMPTS_DIR / prompt_name)
     except FileNotFoundError as e:
         state.log(f"    ❌ Error: {e}")
         return False
 
     try:
-        data, raw_text = generate_structured_json(
+        data, raw_text, parse_error = generate_structured_json(
             client=state.openai_client,
-            model=TEXT_MODEL_AGENT_BCD,
+            model=TEXT_MODEL_AGENT_D,
             system_prompt=system_prompt,
             user_prompt=(
                 f"Analyze this HTML content and identify up to {MAX_IMAGES} "
                 f"optimal locations for educational images:\n\n{state.step_outputs['agent_c']}"
             ),
-            max_output_tokens=4096,
+            max_output_tokens=_scaled_max_tokens(state, 4096),
             schema_name="image_plan",
             schema=IMAGE_PLAN_SCHEMA,
             schema_description="Image planning data for LMS content.",
         )
+        if raw_text:
+            state.log(f"[debug] Agent D raw response:\n{raw_text}", print_it=False)
 
         if not data:
             state.log("    ❌ Empty or invalid structured output from Agent D")
             if raw_text:
                 state.log(f"    Debug - Raw Response: {raw_text[:200]}...")
+            if parse_error:
+                state.log(f"    Debug - JSON parse error: {parse_error}")
             return False
 
         images = data.get("images", [])
@@ -210,7 +243,8 @@ def stage_d_generate_images(state: PipelineState) -> bool:
         try:
             full_prompt = (
                 f"Generate a high-quality educational illustration: {plan.image_prompt}. "
-                f"Style: Professional, clean, no text or labels, suitable for a textbook."
+                "Style: Minimalist and clean, single focal concept, few elements, "
+                "no text or labels, suitable for a textbook."
             )
 
             response = state.openai_client.images.generate(
@@ -247,7 +281,9 @@ def stage_d_generate_images(state: PipelineState) -> bool:
                     plan.hosted_url = result.url
                     state.log(f"        ✓ Hosted: {result.url}")
                 else:
-                    state.log("        ⚠️ Upload failed or no URL returned, using local path")
+                    state.log(
+                        "        ⚠️ Upload failed or no URL returned, using local path"
+                    )
 
             successful_plans.append(plan)
 
@@ -272,10 +308,13 @@ def _find_heading_index(tags: List[object], heading_text: str) -> Optional[int]:
     return None
 
 
-def _candidate_tags(tags: List[object]) -> List[object]:
+def _candidate_tags(tags: List[object], include_headings: bool = False) -> List[object]:
     candidates = []
     for tag in tags:
-        if not hasattr(tag, "name") or tag.name != "p":
+        if not hasattr(tag, "name") or not tag.name:
+            continue
+        name = tag.name.lower()
+        if name != "p" and not (include_headings and re.fullmatch(r"h[1-6]", name)):
             continue
         if tag.find_parent(["details", "dl"]):
             continue
@@ -287,6 +326,12 @@ def _soup_to_html(soup: BeautifulSoup) -> str:
     if soup.body:
         return "".join(str(item) for item in soup.body.contents)
     return str(soup)
+
+
+def _normalize_insertion_context(text: str) -> str:
+    if "<" in text and ">" in text:
+        text = re.sub(r"<[^>]+>", " ", text)
+    return normalize_text(text)
 
 
 def stage_d_inject_images(state: PipelineState) -> bool:
@@ -324,30 +369,50 @@ def stage_d_inject_images(state: PipelineState) -> bool:
 
     core_tags = _candidate_tags(all_tags[start:end])
     fallback_tags = _candidate_tags(all_tags)
+    fallback_tags_with_headings = _candidate_tags(all_tags, include_headings=True)
     tag_positions = {id(tag): idx for idx, tag in enumerate(all_tags)}
 
     placements = []
     for plan in state.image_plans:
-        img_src = plan.hosted_url or (f"../images/{plan.local_path.name}" if plan.local_path else None)
+        img_src = plan.hosted_url or (
+            f"../images/{plan.local_path.name}" if plan.local_path else None
+        )
         if not img_src:
-            state.log(f"    ⚠️ Missing image source for Figure {plan.figure_number}; skipping")
+            state.log(
+                f"    ⚠️ Missing image source for Figure {plan.figure_number}; skipping"
+            )
             continue
-        context_norm = normalize_text(plan.insertion_context)
+        context_norm = _normalize_insertion_context(plan.insertion_context)
         match_tag = None
         for tag in core_tags:
-            if context_norm and context_norm in normalize_text(tag.get_text(" ", strip=True)):
+            if context_norm and context_norm in normalize_text(
+                tag.get_text(" ", strip=True)
+            ):
                 match_tag = tag
                 break
         if match_tag is None:
             for tag in fallback_tags:
-                if context_norm and context_norm in normalize_text(tag.get_text(" ", strip=True)):
+                if context_norm and context_norm in normalize_text(
+                    tag.get_text(" ", strip=True)
+                ):
                     match_tag = tag
                     break
         if match_tag is None:
-            state.log(f"    ❌ Insertion context not found for Figure {plan.figure_number}")
+            for tag in fallback_tags_with_headings:
+                if context_norm and context_norm in normalize_text(
+                    tag.get_text(" ", strip=True)
+                ):
+                    match_tag = tag
+                    break
+        if match_tag is None:
+            state.log(
+                f"    ❌ Insertion context not found for Figure {plan.figure_number}"
+            )
             state.log(f"       Context looked for: '{plan.insertion_context.strip()}'")
             continue
-        placements.append((tag_positions.get(id(match_tag), 0), match_tag, plan, img_src))
+        placements.append(
+            (tag_positions.get(id(match_tag), 0), match_tag, plan, img_src)
+        )
 
     if not placements:
         state.log("    ⚠️ No valid insertion points found; skipping image injection")
@@ -358,14 +423,22 @@ def stage_d_inject_images(state: PipelineState) -> bool:
 
     for display_number, (_, tag, plan, img_src) in enumerate(placements, start=1):
 
-        caption_text = re.sub(r"^Figure\s+\d+\s*:\s*", "", plan.caption.strip(), flags=re.IGNORECASE)
-        caption_full = f"Figure {display_number}: {caption_text}" if caption_text else f"Figure {display_number}"
+        caption_text = re.sub(
+            r"^Figure\s+\d+\s*:\s*", "", plan.caption.strip(), flags=re.IGNORECASE
+        )
+        caption_full = (
+            f"Figure {display_number}: {caption_text}"
+            if caption_text
+            else f"Figure {display_number}"
+        )
 
         figure = soup.new_tag("figure")
         figure["style"] = "margin: 2em 0; max-width: 75ch;"
 
         img = soup.new_tag("img")
-        img["style"] = "width: 100%; height: auto; border: 1px solid #E0E0E0; border-radius: 4px;"
+        img["style"] = (
+            "width: 100%; height: auto; border: 1px solid #E0E0E0; border-radius: 4px;"
+        )
         img["src"] = img_src
         img["alt"] = plan.alt_text
         img["loading"] = "lazy"
